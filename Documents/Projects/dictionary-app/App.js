@@ -9,29 +9,16 @@ import {
 } from "react-native";
 import axios from "axios";
 
-interface Meaning {
-  partOfSpeech: string;
-  definitions: {
-    definition: string;
-    example?: string;
-  }[];
-}
-
-interface DictionaryResponse {
-  word: string;
-  meanings: Meaning[];
-}
-
 export default function App() {
   const [word, setWord] = useState("");
-  const [result, setResult] = useState<DictionaryResponse | null>(null);
+  const [result, setResult] = useState(null);
   const [error, setError] = useState("");
 
   const searchWord = async () => {
     setError("");
     setResult(null);
     try {
-      const response = await axios.get<DictionaryResponse[]>(
+      const response = await axios.get(
         `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
       );
       setResult(response.data[0]);
@@ -73,29 +60,27 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    marginTop: 50,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "bold",
     marginBottom: 20,
   },
   input: {
     borderColor: "#ccc",
     borderWidth: 1,
-    padding: 12,
-    borderRadius: 8,
+    padding: 10,
     marginBottom: 10,
   },
   error: {
     color: "red",
-    marginVertical: 10,
+    marginTop: 10,
   },
   result: {
     marginTop: 20,
   },
   word: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "bold",
   },
   partOfSpeech: {
@@ -104,8 +89,6 @@ const styles = StyleSheet.create({
   },
   definition: {
     marginLeft: 10,
-  },
-  meaning: {
-    marginTop: 10,
+    marginBottom: 5,
   },
 });
