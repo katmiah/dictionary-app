@@ -7,18 +7,18 @@ import {
   Button,
   ScrollView,
   Image,
+  StatusBar,
 } from "react-native";
 import axios from "axios";
-import ThemeToggle from "./Components/ThemeToggle";
+import ThemeToggle from "./Components/ThemeToggle.jsx";
+import { ThemeProvider, useTheme } from "./Components/ThemeContext.jsx";
 import AudioPlayer from "./Components/Audio.jsx";
 
-export default function App() {
+const AppContent = () => {
   const [word, setWord] = useState("");
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  const toggleTheme = () => setIsDarkMode((prev) => !prev);
+  const { theme, themeName } = useTheme();
 
   const searchWord = async () => {
     setError("");
@@ -37,34 +37,64 @@ export default function App() {
     <ScrollView
       contentContainerStyle={[
         styles.container,
-        { backgroundColor: isDarkMode ? "#000" : "#fff" },
+        { backgroundColor: theme.background },
       ]}
     >
-      <ThemeToggle isDarkMode={isDarkMode} onToggle={toggleTheme} />
-      <Text style={styles.title}>Welcome to my Dictionary App!</Text>
+      <StatusBar
+        barStyle={themeName === "dark" ? "light-content" : "dark-content"}
+        backgroundColor={theme.background}
+      />
+
+      <Text style={[styles.title, { color: theme.text }]}>
+        Welcome to my Dictionary App!
+      </Text>
+
+      <ThemeToggle />
+
       <Image
         style={styles.homeImage}
         source={{
           uri: "https://cdn.pixabay.com/photo/2015/05/25/14/53/book-783394_1280.png",
         }}
       />
+
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            color: theme.text || "#fff",
+            backgroundColor: theme.inputBackground || "#f9f9f9",
+            borderColor: theme.border || "#ccc",
+          },
+        ]}
         placeholder="Enter a word"
+        placeholderTextColor={theme.placeholder || "#888"}
         value={word}
         onChangeText={setWord}
       />
+
       <Button title="Search" onPress={searchWord} />
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+
+      {error ? (
+        <Text style={[styles.error, { color: "red" }]}>{error}</Text>
+      ) : null}
+
       {result && (
         <View style={styles.result}>
-          <Text style={styles.word}>{result.word}</Text>
+          <Text style={[styles.word, { color: theme.text }]}>
+            {result.word}
+          </Text>
           <AudioPlayer word={result.word} />
           {result.meanings.map((meaning, index) => (
             <View key={index} style={styles.meaning}>
-              <Text style={styles.partOfSpeech}>{meaning.partOfSpeech}</Text>
+              <Text style={[styles.partOfSpeech, { color: theme.text }]}>
+                {meaning.partOfSpeech}
+              </Text>
               {meaning.definitions.map((def, i) => (
-                <Text key={i} style={styles.definition}>
+                <Text
+                  key={i}
+                  style={[styles.definition, { color: theme.text }]}
+                >
                   - {def.definition}
                 </Text>
               ))}
@@ -74,10 +104,19 @@ export default function App() {
       )}
     </ScrollView>
   );
+};
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 20,
   },
   title: {
