@@ -138,12 +138,16 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
+    marginTop: 15,
   },
   input: {
+    marginBottom: 180,
     borderColor: "#ccc",
     borderWidth: 1,
     padding: 10,
-    marginBottom: 10,
+    marginTop: 0,
+    width: "100%",
+    alignSelf: "center",
   },
   error: {
     color: "red",
@@ -166,7 +170,9 @@ const styles = StyleSheet.create({
   },
   homeImage: {
     width: "100%",
-    height: "40%",
+    height: "30%",
     marginBottom: 0,
+    alignSelf: "center",
+    resizeMode: "contain",
   },
 });
